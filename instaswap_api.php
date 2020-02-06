@@ -70,4 +70,24 @@ class InstaswapTickers extends InstaswapRequest {
     }
 }
 
+class InstaswapSwap extends InstaswapRequest {
+
+    function __construct( $params )    {
+        $this->fn = "swap";
+        $this->params = $params;
+    }
+
+    function Validate() {
+        return count($this->params) >= 5
+            && isset($this->params["giveCoin"])
+            && isset($this->params["getCoin"])
+            && isset($this->params["sendAmount"])
+			&& isset($this->params["receiveWallet"])
+			&& isset($this->params["refundWallet"])
+			//&& isset($this->params["memo"] // optional
+		;
+    }
+}
+
+
 ?>

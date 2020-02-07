@@ -39,19 +39,48 @@ abstract class InstaswapRequest  {
 	}
 }
 
-class InstaswapReportAllowedPairs extends InstaswapRequest {
+class InstaswapReport extends InstaswapRequest {
 
-	function __construct( $params )    {
+	protected $reportType;
+
+    function __construct( $params = array() )    {
         $this->fn = "report";
-        $this->params = array( "allowedPairs" => "" );
+        $this->params = array_merge(array( $this->reportType => "" ), $params);
     }
 
-	function Validate()	{
-		return true;
-	}
+    function Validate() {
+		return count($this->params) == 1
+            && isset($this->params[$this->reportType]);
+    }
+}
 
-	function getParams()    {
-        return "allowedPairs";
+class InstaswapReportAllowedPairs extends InstaswapReport {
+
+	function __construct( $params )    {
+		$this->reportType = "allowedPairs";
+		parent::__construct( );
+    }
+}
+/* no global calls here, only for testing
+class InstaswapReportOpenOrders extends InstaswapReport {
+
+    function __construct( $params )    {
+        $this->reportType = "openOrders";
+        parent::__construct( );
+    }
+}
+*/
+class InstaswapReportWalletHistory extends InstaswapReport {
+
+    function __construct( $params )    {
+        $this->reportType = "walletSwapHistory";
+        parent::__construct( $params );
+    }
+
+	function Validate() {
+        return count($this->params) == 2
+            && isset($this->params[$this->reportType])
+			&& isset($this->params["wallet"]);
     }
 }
 
@@ -86,6 +115,19 @@ class InstaswapSwap extends InstaswapRequest {
 			&& isset($this->params["refundWallet"])
 			//&& isset($this->params["memo"] // optional
 		;
+    }
+}
+
+class InstaswapSwapState extends InstaswapRequest {
+
+    function __construct( $params )    {
+        $this->fn = "swapState";
+        $this->params = $params;
+    }
+
+    function Validate() {
+        return count($this->params) == 1
+            && isset($this->params["swapId"]);
     }
 }
 
